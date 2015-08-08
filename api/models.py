@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.safestring import mark_safe
 
 
 class Movie(models.Model):
@@ -18,6 +19,12 @@ class Movie(models.Model):
     def __str__(self):
         return "{} ({})".format(self.title, self.release.year)
 
+    def get_poster_html(self):
+        return mark_safe("<img src='{}' height=180/>".format(self.poster))
+
+    def get_poster_small_html(self):
+        return mark_safe("<a href='/admin/api/movie/{}/'><img src='{}' height=80/></a>".format(self.pk, self.poster))
+
 
 class Genre(models.Model):
     title = models.CharField(max_length=255)
@@ -31,3 +38,11 @@ class Person(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_movies_display(self):
+        result = ""
+        for movie in self.directed_movies.all():
+            result += "{}".format(movie.get_poster_small_html())
+        for movie in self.acted_movies.all():
+            result += "{}".format(movie.get_poster_small_html())
+        return mark_safe(result)

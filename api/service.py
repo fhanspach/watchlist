@@ -78,3 +78,10 @@ class OMDBApiService(object):
                 movie.actors.add(person)
 
         movie.save()
+
+    @staticmethod
+    def get_or_import_movie(movie_title, year=None):
+        movie = models.Movie.objects.filter(title=movie_title).first()
+        if movie is not None:
+            return movie
+        return OMDBApiService.import_movie(movie_title, year)
