@@ -28,3 +28,7 @@ class OMDBMock(object):
             "Type": "movie",
             "Response": "True"
         }
+
+    @staticmethod
+    def _request_api_error(movie_title, year):
+        return None

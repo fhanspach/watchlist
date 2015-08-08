@@ -15,10 +15,19 @@ class Movie(models.Model):
     poster = models.URLField()
     imdb_score = models.DecimalField(max_digits=3, decimal_places=1)
 
+    def __str__(self):
+        return "{} ({})".format(self.title, self.release.year)
+
 
 class Genre(models.Model):
     title = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.title
+
 
 class Person(models.Model):
     name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.name

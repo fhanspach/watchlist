@@ -16,6 +16,9 @@ class OMDBApiService(object):
     @staticmethod
     def import_movie(movie_title, year=None):
         api_response = OMDBApiService._request_api(movie_title=movie_title, year=year)
+        if api_response is None:
+            print(api_response)
+            return
 
         movie = models.Movie(title=api_response.get("Title"),
                              rating=api_response.get("Rated"),
@@ -28,6 +31,9 @@ class OMDBApiService(object):
                              release=OMDBApiService._get_release_date(api_response)
                              )
         movie.save()
+        OMDBApiService._add_persons(movie, api_response.get("Director"), role="director")
+        OMDBApiService._add_persons(movie, api_response.get("Actors"), role="actor")
+        OMDBApiService._add_generes(movie, api_response.get("Genre"))
         return movie
 
     @staticmethod
@@ -37,24 +43,35 @@ class OMDBApiService(object):
         pprint(response.json())
         if not response.status_code == requests.codes.ok:
             response.raise_for_status()
-        return response.json()
+        json = response.json()
+        if json.get("Response", "False") == "False" or "Error" in json.keys():
+            print(json.get("Error"))
+            return None
+        return json
 
     @staticmethod
     def _add_generes(movie: "Movie", genere_string:str):
+        if movie is None or genere_string is None:
+            return
+
         genere_names = genere_string.split(",")
         for name in genere_names:
-            genere = models.Genre.objects.get_or_create(title=name)
+            genere, _ = models.Genre.objects.get_or_create(title=name)
             movie.genre.add(genere)
+            genere.save()
         movie.save()
 
     @staticmethod
     def _add_persons(movie: "Movie", persons_string:str, role:str):
+        if movie is None or persons_string is None:
+            return
+
         if role != "director" and role != "actor":
             raise ValueError("role must be 'director' or 'actor")
 
         person_names = persons_string.split(",")
         for name in person_names:
-            person = models.Person.objects.get_or_create(title=name)
+            person, _ = models.Person.objects.get_or_create(name=name)
             if role == "director":
                 movie.director.add(person)
             elif role == "actor":
