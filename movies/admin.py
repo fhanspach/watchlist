@@ -11,7 +11,7 @@ class WatchlistMovieInline(admin.TabularInline):
 
 class WatchlistAdmin(admin.ModelAdmin):
     inlines = (WatchlistMovieInline,)
-    list_display = ("__str__", "get_movies_html")
+    list_display = ("__str__", "get_movies_html", "get_progress_html")
 
 
 admin.site.register(Watchlist, WatchlistAdmin)

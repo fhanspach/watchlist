@@ -25,6 +25,10 @@ class Movie(models.Model):
     def get_poster_small_html(self):
         return mark_safe("<a href='/admin/api/movie/{}/'><img src='{}' height=80/></a>".format(self.pk, self.poster))
 
+    def get_url(self):
+        # FIXME this is not generic
+        return "/admin/api/movie/{}/'".format(self.pk)
+
 
 class Genre(models.Model):
     title = models.CharField(max_length=255)

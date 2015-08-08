@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from movies import views
+from ui import views as ui_views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^import', views.import_movie),
+    url(r'^list/(?P<watchlist_uid>[^/]+)/', ui_views.show_watchlist),
 ]
