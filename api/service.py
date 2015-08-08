@@ -1,7 +1,7 @@
 from . import models
 from pprint import pprint
 import arrow
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from parse import parse
 import requests
 
@@ -19,7 +19,12 @@ class OMDBApiService(object):
         if api_response is None:
             print(api_response)
             return
-
+        try:
+            imdb_rating = Decimal(api_response.get("imdbRating"))
+        except InvalidOperation:
+            # TODO set to none
+            imdb_rating = 0
+        #TODO every value can be N/A
         movie = models.Movie(title=api_response.get("Title"),
                              rating=api_response.get("Rated"),
                              runtime=int(parse("{:d} min", api_response.get("Runtime", "0 min"))[0]),
@@ -27,9 +32,13 @@ class OMDBApiService(object):
                              plot=api_response.get("Plot"),
                              country=api_response.get("Country"),
                              poster=api_response.get("Poster"),
-                             imdb_score=Decimal(api_response.get("imdbRating")),
+                             imdb_score=imdb_rating,
                              release=OMDBApiService._get_release_date(api_response)
                              )
+        # Check if the movie was imported under another name
+        if models.Movie.objects.filter(title=movie.title, release=movie.release).exists():
+            return models.Movie.objects.filter(title=movie.title, release=movie.release).first()
+
         movie.save()
         OMDBApiService._add_persons(movie, api_response.get("Director"), role="director")
         OMDBApiService._add_persons(movie, api_response.get("Actors"), role="actor")

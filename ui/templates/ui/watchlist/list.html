@@ -1,0 +1,95 @@
+{% extends "ui/index.html" %}
+
+{% block content %}
+    <!-- Page Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">List: {{ watchlist.title }}
+                    <span style="float: right; font-size: 2rem;">
+                    <a href="?sort=title{% if sorting == 'title' %}&inverted={{ inverted }}{% endif %}"  class="fa fa-sort-alpha-asc btn {% if sorting == 'title' %}btn-info{% else %}btn-default{% endif %}"></a>
+                    <a href="?sort=runtime{% if sorting == 'runtime' %}&inverted={{ inverted }}{% endif %}" class="fa fa-clock-o btn {% if sorting == 'runtime' %}btn-info{% else %}btn-default{% endif %}"></a>
+                    <a href="?sort=release{% if sorting == 'release' %}&inverted={{ inverted }}{% endif %}" class="fa fa-calendar-o btn {% if sorting == 'release' %}btn-info{% else %}btn-default{% endif %}"></a>
+                    <a href="?sort=imdb_score{% if sorting == 'imdb_score' %}&inverted={{ inverted }}{% endif %}" class="fa fa-star btn {% if sorting == 'imdb_score' %}btn-info{% else %}btn-default{% endif %}"></a>
+                    <a href="#" class="fa fa-cog btn btn-default"></a>
+                </span>
+                    <!--<small>Secondary Text</small>-->
+                </h1>
+            </div>
+        </div>
+        <!-- /.row -->
+        <!--
+        <div class="row">
+            <div class="col-lg-12">
+                <div style="float: right; font-size: 2rem;">
+                    <button class="fa fa-sort-alpha-asc btn btn-info"></button>
+                    <button class="fa fa-clock-o btn btn-default"></button>
+                    <button class="fa fa-calendar-o btn btn-default"></button>
+                    <button class="fa fa-star btn btn-default"></button>
+                </div>
+            </div>
+        </div>
+    -->
+        {% for movie in movies.all %}
+        <!-- Project One -->
+        <div class="row {% if movie.seen %}{% endif %}" >
+            <!--
+            <div class="col-md-1">
+                <div style="color: #27ae60; font-size: 7rem;">
+                    <div class="fa fa-check">
+
+                    </div>
+                </div>
+            </div>
+            -->
+            <div class="col-md-3">
+                <a href="#" class="text-center">
+                    <img class="img-responsive img-rounded center-block" src="{{ movie.movie.poster }}" alt="">
+                </a>
+            </div>
+            <div class="col-md-8">
+                <h3>{{ movie.movie.title }} <small>({{ movie.movie.release.year }})</small></h3>
+                <h4 style="color: #696969">
+                    {{ movie.movie.get_html_stars }} |
+                     <span class="fa fa-clock-o"></span>&nbsp;{{ movie.movie.runtime }} min
+                </h4>
+
+
+                <p>{{ movie.movie.plot }}</p>
+                <p>
+                {% for actor in movie.movie.genre.all %}
+                    <code class="bg-danger text-danger">{{ actor.title }}</code>
+                {% endfor %}
+                </p>
+                <p>
+                {% for actor in movie.movie.director.all %}
+                    <code class="bg-warning text-warning">{{ actor.name }}</code>
+                {% endfor %}
+                {% for actor in movie.movie.actors.all %}
+                    <code class="bg-info info" style="color: #2e6da4">{{ actor.name }}</code>
+                {% endfor %}
+            </p>
+
+            </div>
+        </div>
+        <!-- /.row -->
+        {% if not forloop.last %}
+            <hr>
+            {% endif %}
+
+        {% endfor %}
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <button type="button" class="btn btn-success btn-lg"><span class="fa fa-plus"></span>&nbsp; Add Movie</button>
+                <button type="button" class="btn btn-danger btn-lg pull-right"><span class="fa fa-trash"></span></button>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+
+            </div>
+        </div>
+{% endblock %}

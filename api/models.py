@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.safestring import mark_safe
+import math
 
 
 class Movie(models.Model):
@@ -29,12 +30,32 @@ class Movie(models.Model):
         # FIXME this is not generic
         return "/admin/api/movie/{}/'".format(self.pk)
 
+    def get_html_stars(self):
+        result = ""
+        rating = self.imdb_score / 2
+        int_part = math.floor(rating)
+        for i in range(0, int_part):
+            result += "<span class='fa fa-star'></span>"
+        if (rating - int_part) >= 0.5:
+            result += "<span class='fa fa-star-half-o'></span>"
+        else:
+            result += "<span class='fa fa-star-o'></span>"
+        for i in range(1, 5 - int_part):
+            result += "<span class='fa fa-star-o'></span>"
+        return mark_safe(result)
+
 
 class Genre(models.Model):
     title = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title
+
+    def get_movies_display(self):
+        result = ""
+        for movie in self.movie_set.all():
+            result += "{}".format(movie.get_poster_small_html())
+        return mark_safe(result)
 
 
 class Person(models.Model):

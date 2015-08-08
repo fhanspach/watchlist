@@ -1,0 +1,5 @@
+{% extends "ui/index.html" %}
+
+{% block content %}
+    <h1 class="text-danger">{% if error_message %}{{ error_message }}{% else %}Wow! That was an error :({% endif %}</h1>
+{% endblock %}
