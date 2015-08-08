@@ -31,7 +31,7 @@
     -->
         {% for movie in movies.all %}
         <!-- Project One -->
-        <div class="row {% if movie.seen %}{% endif %}" >
+        <div class="row movie {% if movie.seen %}{% endif %}" id="poster-{{ movie.movie.pk }}">
             <!--
             <div class="col-md-1">
                 <div style="color: #27ae60; font-size: 7rem;">
@@ -42,10 +42,27 @@
             </div>
             -->
             <div class="col-md-3">
-                <a href="#" class="text-center">
-                    <img class="img-responsive img-rounded center-block" src="{{ movie.movie.poster }}" alt="">
-                </a>
+                    <img class="img-responsive img-rounded center-block" src="{{ movie.movie.poster }}"  alt="">
             </div>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    var element = document.getElementById('poster-{{ movie.movie.pk }}');
+                    var swipe_movie = new Hammer(element,{});
+                    swipe_movie.on('panend', function (ev) {
+                        if (ev.deltaX > 350) {
+                            element.style.display = "none";
+                        }
+                        element.style.transform = 'translateX(0px)';
+                    });
+                    swipe_movie.on('panright panleft', function (ev) {
+                        console.log(event.deltaX);
+                        element.style.transform = 'translateX(' + ev.deltaX + 'px)';
+                    });
+                    swipe_movie.get('pan').set({ direction: Hammer.DIRECTION_RIGHT });
+
+                });
+            </script>
+
             <div class="col-md-8">
                 <h3>{{ movie.movie.title }} <small>({{ movie.movie.release.year }})</small></h3>
                 <h4 style="color: #696969">
@@ -92,4 +109,6 @@
 
             </div>
         </div>
+
+
 {% endblock %}
