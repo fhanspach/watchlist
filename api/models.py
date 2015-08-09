@@ -42,6 +42,7 @@ class Movie(models.Model):
             result += "<span class='fa fa-star-o'></span>"
         for i in range(1, 5 - int_part):
             result += "<span class='fa fa-star-o'></span>"
+        result = "<span class='star{}'>{}</span>".format(int_part, result)
         return mark_safe(result)
 
 

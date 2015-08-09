@@ -11,3 +11,13 @@ body {
 footer {
     margin: 50px 0;
 }
+
+.star1>span,.star2>span {
+    color: #d35400;
+}
+.star3  {
+    color: #f39c12;
+}
+.star4>span,.star5>span  {
+    color: #27ae60;
+}

@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^import', views.import_movie),
     url(r'^list/(?P<watchlist_uid>[^/]+)/', ui_views.show_watchlist),
+    url(r'^', ui_views.all_movies),
 ]

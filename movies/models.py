@@ -9,6 +9,7 @@ from api.models import Movie
 class Watchlist(models.Model):
     title = models.CharField(max_length=255)
     identifier = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+    is_private = models.BooleanField(default=False)
 
     def __str__(self):
         return "{}".format(self.title)

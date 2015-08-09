@@ -4,7 +4,7 @@
     <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">List: {{ watchlist.title }}
+                <h1 class="page-header">{% if watchlist.is_private %}<span class="fa fa-lock"></span>{% else %}<span class="fa fa-unlock"></span>{% endif %}&nbsp;{{ watchlist.title }}
                     <span style="float: right; font-size: 2rem;">
                     <a href="?sort=title{% if sorting == 'title' %}&inverted={{ inverted }}{% endif %}"  class="fa fa-sort-alpha-asc btn {% if sorting == 'title' %}btn-info{% else %}btn-default{% endif %}"></a>
                     <a href="?sort=runtime{% if sorting == 'runtime' %}&inverted={{ inverted }}{% endif %}" class="fa fa-clock-o btn {% if sorting == 'runtime' %}btn-info{% else %}btn-default{% endif %}"></a>
@@ -29,9 +29,9 @@
             </div>
         </div>
     -->
-        {% for movie in movies.all %}
+        {% for movie in movies %}
         <!-- Project One -->
-        <div class="row movie {% if movie.seen %}{% endif %}" id="poster-{{ movie.movie.pk }}">
+        <div class="row movie {% if movie.seen %}{% endif %}" id="poster-{{ movie.pk }}">
             <!--
             <div class="col-md-1">
                 <div style="color: #27ae60; font-size: 7rem;">
@@ -42,16 +42,24 @@
             </div>
             -->
             <div class="col-md-3">
-                    <img class="img-responsive img-rounded center-block" src="{{ movie.movie.poster }}"  alt="">
+                    <img class="img-responsive img-rounded center-block" src="{{ movie.poster }}"  alt="">
             </div>
             <script type="text/javascript">
                 $(document).ready(function () {
-                    var element = document.getElementById('poster-{{ movie.movie.pk }}');
+                    var element = document.getElementById('poster-{{ movie.pk }}');
+                    var finished = document.getElementById("{{ movie.pk }}-finished");
+                    var now = new Date();
+                    var endTime = new Date(now.getTime() + {{ movie.runtime }}*60000);
+                    var format = ("0"+ endTime.getHours()).slice(-2) + ":" + ("0"+ endTime.getMinutes()).slice(-2);
+                    console.log(format);
+                    finished.innerHTML = format;
+
                     var swipe_movie = new Hammer(element,{});
                     swipe_movie.on('panend', function (ev) {
                         if (ev.deltaX > 350) {
-                            element.style.display = "none";
+                            alert("deleted")
                         }
+
                         element.style.transform = 'translateX(0px)';
                     });
                     swipe_movie.on('panright panleft', function (ev) {
@@ -64,24 +72,24 @@
             </script>
 
             <div class="col-md-8">
-                <h3>{{ movie.movie.title }} <small>({{ movie.movie.release.year }})</small></h3>
+                <h3>{{ movie.title }} <small>({{ movie.release.year }})</small></h3>
                 <h4 style="color: #696969">
-                    {{ movie.movie.get_html_stars }} |
-                     <span class="fa fa-clock-o"></span>&nbsp;{{ movie.movie.runtime }} min
+                    {{ movie.get_html_stars }}
+                     <span class="fa fa-clock-o"></span>&nbsp;{{ movie.runtime }} min <small> due: <span id="{{ movie.pk }}-finished"></span></small>
                 </h4>
 
 
-                <p>{{ movie.movie.plot }}</p>
+                <p>{{ movie.plot }}</p>
                 <p>
-                {% for actor in movie.movie.genre.all %}
+                {% for actor in movie.genre.all %}
                     <code class="bg-danger text-danger">{{ actor.title }}</code>
                 {% endfor %}
                 </p>
                 <p>
-                {% for actor in movie.movie.director.all %}
+                {% for actor in movie.director.all %}
                     <code class="bg-warning text-warning">{{ actor.name }}</code>
                 {% endfor %}
-                {% for actor in movie.movie.actors.all %}
+                {% for actor in movie.actors.all %}
                     <code class="bg-info info" style="color: #2e6da4">{{ actor.name }}</code>
                 {% endfor %}
             </p>

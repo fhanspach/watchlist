@@ -15,3 +15,14 @@ body {
 footer {
     margin: 50px 0;
 }
+
+.star1>span,.star2>span {
+    color: darkred !important;
+}
+.star3  {
+    color: #ffff00 !important;
+}
+.star4>span,.star5>span  {
+    color: greenyellow !important;
+}
+
